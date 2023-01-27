@@ -5,7 +5,7 @@ function triggerFakeEvent() {
 
 function handleEvent(message) {
     let node = document.createElement("p");
-    node.innerHTML = message;
+    node.innerHTML = feather.icons["arrow-right-circle"].toSvg() + message;
     document.body.appendChild(node);
 }
 
