@@ -23,6 +23,14 @@ def load_from_tarball(tarball: str, path: str) -> str:
         return src.read()
 
 
+def guess_mime_type(path: str) -> str:
+    if path.endswith(".js"):
+        return "text/javascript"
+    if path.endswith(".css"):
+        return "text/css"  # firefox won't load without this set
+    return "text/html"  # is there a better default?!?
+
+
 @APP.route("/")
 async def home():
     #return "Hello World"
@@ -47,7 +55,10 @@ async def asset(path: str):
 
 @APP.route("/vendor/<string:pkgname>/<path:path>")
 async def vendor(pkgname: str, path: str):
-    return load_from_tarball("vendor/" + pkgname + ".tar.gz", "package/" + path)
+    content = load_from_tarball("vendor/" + pkgname + ".tar.gz", "package/" + path)
+    response = await make_response(content)
+    response.mimetype = guess_mime_type(path)
+    return response
 
 
 if __name__ == "__main__":
