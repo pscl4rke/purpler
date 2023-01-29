@@ -3,7 +3,9 @@
 import os
 import tarfile
 
-from quart import Quart
+from quart import Quart, make_response
+
+from events import event_producer
 
 
 APP = Quart("purpler")
@@ -25,6 +27,17 @@ def load_from_tarball(tarball: str, path: str) -> str:
 async def home():
     #return "Hello World"
     return load_from_file(".", "home.html")
+
+
+@APP.route("/events")
+async def events():
+    response = await make_response(event_producer(), {
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Transfer-Encoding": "chunked",
+    })
+    response.timeout = None
+    return response
 
 
 @APP.route("/asset/<path:path>")

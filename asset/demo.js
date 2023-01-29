@@ -11,5 +11,10 @@ function handleEvent(message) {
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("I have loaded!");
-    setInterval(triggerFakeEvent, 2000);
+    //setInterval(triggerFakeEvent, 2000);
+    const eventSource = new EventSource("/events");
+    eventSource.addEventListener("newnumber", (event) => {
+        let message = "Hello from Server " + event.data;
+        handleEvent(message);
+    })
 });
