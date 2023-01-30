@@ -10,3 +10,6 @@ vendor/feather-icons@4.29.0.tar.gz:
 
 vendor/bootstrap@5.2.3.tar.gz:
 	wget $$(npm view bootstrap@5.2.3 dist.tarball) -O $@
+
+vendor/slim-js@5.0.10.tar.gz:
+	wget $$(npm view slim-js@5.0.10 dist.tarball) -O $@

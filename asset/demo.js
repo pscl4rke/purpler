@@ -1,7 +1,30 @@
-function triggerFakeEvent() {
-    let message = "Hello World " + Math.floor(Math.random() * 100);
-    handleEvent(message);
+
+class FeatherIcon extends HTMLElement {
+    connectedCallback() {
+        this.innerHTML = feather.icons[this.getAttribute("name")].toSvg();
+    }
 }
+
+customElements.define("feather-icon", FeatherIcon)
+
+// I think only a module can import a module???
+//import { Slim } from "slim-js";
+
+class NotificationWidget extends Slim {
+    constructor(eventIdentifer) {
+        super();
+        this.eventIdentifer = eventIdentifer;
+    }
+}
+
+Slim.element(
+    "notification-widget",
+    `<p>
+        <feather-icon name="arrow-right-circle"></feather-icon>
+        {{this.eventIdentifer}}
+    </p>`,
+    NotificationWidget
+)
 
 function startFollowingEvents() {
     console.log("Connecting to '/events'");
@@ -17,13 +40,11 @@ function startFollowingEvents() {
 }
 
 function handleEvent(message) {
-    let node = document.createElement("p");
-    node.innerHTML = feather.icons["arrow-right-circle"].toSvg() + message;
+    let node = new NotificationWidget(message);
     document.body.appendChild(node);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("I have loaded!");
-    //setInterval(triggerFakeEvent, 2000);
     startFollowingEvents();
 });
