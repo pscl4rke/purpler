@@ -33,6 +33,10 @@ function startFollowingEvents() {
         let message = "Hello from Server " + event.data;
         handleEvent(message);
     })
+    eventSource.addEventListener("direction", (event) => {
+        let message = "Heading " + event.data + "...";
+        handleEvent(message);
+    })
     eventSource.onerror = (err) => {
         console.log("Event Source Error Here " + err);
         startFollowingEvents();
