@@ -26,6 +26,23 @@ Slim.element(
     NotificationWidget
 )
 
+class CounterWidget extends Slim {
+    constructor(name) {
+        super();
+        this.name = name;
+        this.count = 0;
+    }
+    increment() {
+        this.count += 1;
+    }
+}
+
+Slim.element(
+    "counter-widget",
+    `<p><b>{{this.name}}:</b> {{this.count}}</p>`,
+    CounterWidget,
+)
+
 function startFollowingEvents() {
     console.log("Connecting to '/events'");
     const eventSource = new EventSource("/events");
@@ -34,6 +51,7 @@ function startFollowingEvents() {
         handleEvent(message);
     })
     eventSource.addEventListener("direction", (event) => {
+        window.directionCounter.increment();
         let message = "Heading " + event.data + "...";
         handleEvent(message);
     })
@@ -50,5 +68,7 @@ function handleEvent(message) {
 
 document.addEventListener("DOMContentLoaded", () => {
     console.log("I have loaded!");
+    window.directionCounter = new CounterWidget("Direction");
+    document.body.appendChild(window.directionCounter);
     startFollowingEvents();
 });
