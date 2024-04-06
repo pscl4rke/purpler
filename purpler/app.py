@@ -4,7 +4,7 @@ import os
 
 from quart import Quart, make_response
 
-import aguirre_quart
+import aguirre.integrations.quart as aguirre_quart
 from events import event_producer
 
 
