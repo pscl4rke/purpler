@@ -3,12 +3,13 @@
 import os
 
 from quart import Quart, make_response
-from aguirre.util import guess_mime_type, load_from_tarball
 
+from aguirre_quart import BLUEPRINT
 from events import event_producer
 
 
 APP = Quart("purpler")
+APP.register_blueprint(BLUEPRINT, url_prefix="/vendor")
 
 
 def load_from_file(basedir: str, path: str) -> str:
@@ -36,15 +37,6 @@ async def events():
 @APP.route("/asset/<path:path>")
 async def asset(path: str):
     return load_from_file("asset", path)
-
-
-@APP.route("/vendor/<package>@<version>/<path:resourcepath>")
-async def vendor(package: str, version: str, resourcepath: str):
-    srcpath = f"vendor/{package}@{version}.tar.gz"
-    content = load_from_tarball(srcpath, f"package/{resourcepath}")
-    response = await make_response(content)
-    response.mimetype = guess_mime_type(resourcepath)
-    return response
 
 
 if __name__ == "__main__":
