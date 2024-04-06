@@ -1,16 +1,25 @@
 
 
-from quart import Blueprint, make_response
+import quart
+from quart.typing import ResponseReturnValue as Rsp
 from aguirre.util import guess_mime_type, load_from_tarball
 
 
-BLUEPRINT = Blueprint("aguirre", "aguirre")
-
-
-@BLUEPRINT.route("/<package>@<version>/<path:resourcepath>")
-async def vendor(package: str, version: str, resourcepath: str):
-    srcpath = f"vendor/{package}@{version}.tar.gz"
+async def view(basedir: str, package: str, version: str, resourcepath: str) -> Rsp:
+    srcpath = f"{basedir}/{package}@{version}.tar.gz"
     content = load_from_tarball(srcpath, f"package/{resourcepath}")
-    response = await make_response(content)
+    if content is None:
+        return quart.abort(404)
+    response = await quart.make_response(content)
     response.mimetype = guess_mime_type(resourcepath)
     return response
+
+
+def create_blueprint(basedir: str) -> quart.Blueprint:
+    blueprint = quart.Blueprint("aguirre", "aguirre")
+    blueprint.add_url_rule(
+        "/<package>@<version>/<path:resourcepath>",
+        view_func=view,
+        defaults={"basedir": basedir},
+    )
+    return blueprint

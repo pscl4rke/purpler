@@ -4,12 +4,13 @@ import os
 
 from quart import Quart, make_response
 
-from aguirre_quart import BLUEPRINT
+import aguirre_quart
 from events import event_producer
 
 
 APP = Quart("purpler")
-APP.register_blueprint(BLUEPRINT, url_prefix="/vendor")
+APP.register_blueprint(aguirre_quart.create_blueprint("vendor"),
+                       url_prefix="/vendor")
 
 
 def load_from_file(basedir: str, path: str) -> str:
