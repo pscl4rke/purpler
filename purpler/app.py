@@ -4,6 +4,7 @@ import os
 import tarfile
 
 from quart import Quart, make_response
+from aguirre.util import guess_mime_type, load_from_tarball
 
 from events import event_producer
 
@@ -14,21 +15,6 @@ APP = Quart("purpler")
 def load_from_file(basedir: str, path: str) -> str:
     with open(os.path.join(basedir, path)) as f:
         return f.read()
-
-
-def load_from_tarball(tarball: str, path: str) -> str:
-    with tarfile.open(tarball, "r:gz") as archive:
-        #member = archive.getmember(path)
-        src = archive.extractfile(path)
-        return src.read()
-
-
-def guess_mime_type(path: str) -> str:
-    if path.endswith(".js"):
-        return "text/javascript"
-    if path.endswith(".css"):
-        return "text/css"  # firefox won't load without this set
-    return "text/html"  # is there a better default?!?
 
 
 @APP.route("/")

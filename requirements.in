@@ -1,1 +1,5 @@
 quart
+
+# As things stand you have to remember to run:
+#   $ pip install git+https://github.com/pscl4rke/aguirre.git
+# manually after using requirements.txt
