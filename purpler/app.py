@@ -1,7 +1,6 @@
 
 
 import os
-import tarfile
 
 from quart import Quart, make_response
 from aguirre.util import guess_mime_type, load_from_tarball
@@ -39,11 +38,12 @@ async def asset(path: str):
     return load_from_file("asset", path)
 
 
-@APP.route("/vendor/<string:pkgname>/<path:path>")
-async def vendor(pkgname: str, path: str):
-    content = load_from_tarball("vendor/" + pkgname + ".tar.gz", "package/" + path)
+@APP.route("/vendor/<package>@<version>/<path:resourcepath>")
+async def vendor(package: str, version: str, resourcepath: str):
+    srcpath = f"vendor/{package}@{version}.tar.gz"
+    content = load_from_tarball(srcpath, f"package/{resourcepath}")
     response = await make_response(content)
-    response.mimetype = guess_mime_type(path)
+    response.mimetype = guess_mime_type(resourcepath)
     return response
 
 
